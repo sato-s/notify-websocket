@@ -27,8 +27,6 @@ func main() {
 	// 	log.Printf("[%s] Disconnected from server", c.ID())
 	// }
 
-	app.HandleDir("/js", iris.Dir("./static/js")) // serve our custom javascript code.
-
 	app.Get("/my_endpoint", websocket.Handler(ws))
 
 	app.Listen(":8080")
