@@ -1,33 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/websocket"
+	"github.com/kataras/neffos"
 )
+
+func onChat(ns *neffos.NSConn, msg neffos.Message) error {
+	// ctx := websocket.GetContext(ns.Conn)
+	// log.Println(string(msg.Body))
+	// fmt.Printf("%+v\n", msg)
+	// fmt.Printf("%+v\n", ctx)
+	return nil
+}
+
+func OnRoomJoined(ns *neffos.NSConn, msg neffos.Message) error {
+	ctx := websocket.GetContext(ns.Conn)
+	log.Println("====RoomJoined====")
+	fmt.Printf("%+v\n", msg)
+	fmt.Printf("%+v\n", ctx)
+	return nil
+}
 
 func main() {
 	app := iris.New()
-	ws := websocket.New(websocket.DefaultGorillaUpgrader, websocket.Events{
-		websocket.OnNativeMessage: func(nsConn *websocket.NSConn, msg websocket.Message) error {
-			log.Printf("Server got: %s from [%s]", msg.Body, nsConn.Conn.ID())
-
-			nsConn.Conn.Server().Broadcast(nsConn, msg)
-			return nil
+	ws := neffos.New(websocket.DefaultGorillaUpgrader, neffos.Namespaces{
+		"default": neffos.Events{
+			"chat":                    onChat,
+			neffos.OnNamespaceConnect: OnRoomJoined,
+			neffos.OnRoomJoin:         OnRoomJoined,
+			"OnRoomJoined":            OnRoomJoined,
 		},
 	})
-
-	// ws.OnConnect = func(c *websocket.Conn) error {
-	// 	log.Printf("[%s] Connected to server!", c.ID())
-	// 	return nil
-	// }
-	//
-	// ws.OnDisconnect = func(c *websocket.Conn) {
-	// 	log.Printf("[%s] Disconnected from server", c.ID())
-	// }
-
-	app.Get("/my_endpoint", websocket.Handler(ws))
+	app.Get("/", websocket.Handler(ws))
 
 	app.Listen(":8080")
 }
