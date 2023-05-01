@@ -10,10 +10,10 @@ import (
 )
 
 type Server struct {
-	port uint
+	port string
 }
 
-func NewServer(port uint) *Server {
+func NewServer(port string) *Server {
 	s := &Server{port: port}
 	s.run()
 	return s
@@ -31,7 +31,7 @@ func (s *Server) run() {
 	})
 	app.Get("/", websocket.Handler(ws))
 
-	app.Listen(fmt.Sprintf(":%d", s.port))
+	app.Listen(fmt.Sprintf(":%s", s.port))
 }
 
 func (s *Server) onChat(ns *neffos.NSConn, msg neffos.Message) error {
