@@ -3,14 +3,17 @@ package main
 import (
 	"log"
 	"time"
+
+	"github.com/kataras/neffos"
 )
 
 type Room struct {
 	name   string
+	ws     *neffos.Server
 	ticker *time.Ticker
 }
 
-func NewRoom(name string) *Room {
+func NewRoom(name string, ws *neffos.Server) *Room {
 	r := &Room{
 		name:   name,
 		ticker: time.NewTicker(1 * time.Second),
