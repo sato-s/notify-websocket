@@ -25,19 +25,17 @@ func NewRoom(name string, ws *neffos.Server) *Room {
 
 func (r *Room) run() {
 	log.Printf("Room `%s` is running\n", r.name)
-	go func() {
-		for {
-			select {
-			case <-r.ticker.C:
-				log.Println("tick")
-				m := neffos.Message{
-					Namespace: "default",
-					Event:     "tick",
-					Room:      r.name,
-					Body:      []byte("tick!"),
-				}
-				r.ws.Broadcast(nil, m)
+	for {
+		select {
+		case <-r.ticker.C:
+			log.Println("tick")
+			m := neffos.Message{
+				Namespace: "default",
+				Event:     "tick",
+				Room:      r.name,
+				Body:      []byte("tick!"),
 			}
+			r.ws.Broadcast(nil, m)
 		}
-	}()
+	}
 }
