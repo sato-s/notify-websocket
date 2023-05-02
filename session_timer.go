@@ -7,6 +7,7 @@ import (
 
 const INTERVAL = 1 * time.Second
 
+// Emit 15:00, 14:59, 14:58 ...  00:00
 type SessionTimer struct {
 	C           chan string
 	tick        chan struct{}
@@ -46,10 +47,12 @@ func (st *SessionTimer) Start(limitTick int) {
 	}()
 }
 
-func (st *SessionTimer) Stop() {
+func (st *SessionTimer) Resume() {
+	st.Start(st.limitTick - st.currentTick)
 }
 
-func (st *SessionTimer) Reset() {
+func (st *SessionTimer) Stop() {
+	st.stop <- struct{}{}
 }
 
 func (st *SessionTimer) run() {
@@ -58,7 +61,7 @@ func (st *SessionTimer) run() {
 		case <-st.tick:
 			st.C <- fmt.Sprintf("tick:%d", st.currentTick)
 		case <-st.stop:
-			return
+			st.ticker.Stop()
 		}
 	}
 }

@@ -26,10 +26,9 @@ func (s *Server) run() {
 	app := iris.New()
 	ws := neffos.New(websocket.DefaultGorillaUpgrader, neffos.Namespaces{
 		"default": neffos.Events{
-			"chat":                    s.onChat,
-			neffos.OnNamespaceConnect: s.Debug,
-			neffos.OnRoomJoin:         s.OnRoomJoin,
-			neffos.OnRoomJoined:       s.Debug,
+			"chat":              s.Debug,
+			neffos.OnRoomJoin:   s.OnRoomJoin,
+			neffos.OnRoomJoined: s.Debug,
 		},
 	})
 	fmt.Printf("%+v\n", ws)
@@ -37,14 +36,6 @@ func (s *Server) run() {
 	app.Get("/", websocket.Handler(s.ws))
 
 	app.Listen(fmt.Sprintf(":%s", s.port))
-}
-
-func (s *Server) onChat(ns *neffos.NSConn, msg neffos.Message) error {
-	// ctx := websocket.GetContext(ns.Conn)
-	// log.Println(string(msg.Body))
-	// fmt.Printf("%+v\n", msg)
-	// fmt.Printf("%+v\n", ctx)
-	return nil
 }
 
 func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
@@ -58,9 +49,9 @@ func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
 }
 
 func (s *Server) Debug(ns *neffos.NSConn, msg neffos.Message) error {
-	// ctx := websocket.GetContext(ns.Conn)
-	// log.Println("====RoomJoined====")
-	// fmt.Printf("%+v\n", msg)
-	// fmt.Printf("%+v\n", ctx)
+	ctx := websocket.GetContext(ns.Conn)
+	log.Println("====RoomJoined====")
+	fmt.Printf("%+v\n", msg)
+	fmt.Printf("%+v\n", ctx)
 	return nil
 }
