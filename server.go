@@ -28,6 +28,7 @@ func (s *Server) run() {
 		"default": neffos.Events{
 			"chat":              s.Debug,
 			neffos.OnRoomJoin:   s.OnRoomJoin,
+			"startRoomSession":  s.OnStartRoomSession,
 			neffos.OnRoomJoined: s.Debug,
 		},
 	})
@@ -36,6 +37,11 @@ func (s *Server) run() {
 	app.Get("/", websocket.Handler(s.ws))
 
 	app.Listen(fmt.Sprintf(":%s", s.port))
+}
+
+func (s *Server) OnStartRoomSession(ns *neffos.NSConn, msg neffos.Message) error {
+	s.r.Start()
+	return nil
 }
 
 func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
