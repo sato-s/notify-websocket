@@ -12,6 +12,7 @@ import (
 type Server struct {
 	port string
 	ws   *neffos.Server
+	r    *Room
 }
 
 func NewServer(port string) *Server {
@@ -27,7 +28,7 @@ func (s *Server) run() {
 		"default": neffos.Events{
 			"chat":                    s.onChat,
 			neffos.OnNamespaceConnect: s.Debug,
-			neffos.OnRoomJoin:         s.Debug,
+			neffos.OnRoomJoin:         s.OnRoomJoin,
 			neffos.OnRoomJoined:       s.Debug,
 		},
 	})
@@ -51,14 +52,15 @@ func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
 	fmt.Printf("%+v\n", msg)
 	fmt.Printf("%+v\n", ctx)
 
-	NewRoom("test", s.ws)
+	log.Println("====room create====")
+	s.r = NewRoom("sample_room", s.ws)
 	return nil
 }
 
 func (s *Server) Debug(ns *neffos.NSConn, msg neffos.Message) error {
-	ctx := websocket.GetContext(ns.Conn)
-	log.Println("====RoomJoined====")
-	fmt.Printf("%+v\n", msg)
-	fmt.Printf("%+v\n", ctx)
+	// ctx := websocket.GetContext(ns.Conn)
+	// log.Println("====RoomJoined====")
+	// fmt.Printf("%+v\n", msg)
+	// fmt.Printf("%+v\n", ctx)
 	return nil
 }

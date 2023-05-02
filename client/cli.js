@@ -28,6 +28,10 @@ async function runExample() {
             // "chat" event.
             console.log(msg.Body);
           },
+          tick: function (nsConn, msg) {
+            // "chat" event.
+            console.log(msg.Body);
+          },
         },
       },
       {
