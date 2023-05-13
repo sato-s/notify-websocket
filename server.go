@@ -40,17 +40,16 @@ func (s *Server) run() {
 }
 
 func (s *Server) OnStartRoomSession(ns *neffos.NSConn, msg neffos.Message) error {
+	log.Printf("%s", string(msg.Body))
+
+	log.Printf("Session Start at Room `%s Time: %d \n", msg.Room, 10)
 	s.r.Start()
 	return nil
 }
 
 func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
-	ctx := websocket.GetContext(ns.Conn)
-	fmt.Printf("%+v\n", msg)
-	fmt.Printf("%+v\n", ctx)
-
-	log.Println("====room create====")
-	s.r = NewRoom("sample_room", s.ws)
+	s.r = NewRoom(msg.Room, s.ws)
+	log.Printf("Room `%s` created\n", msg.Room)
 	return nil
 }
 
