@@ -45,11 +45,10 @@ async function runExample() {
     );
 
     const nsConn = await conn.connect("default");
-    nsConn.emit("chat", "Hello from client side!");
 
-    const room = await nsConn.joinRoom("sample_room");
+    const room = await nsConn.joinRoom("sample_room2");
     console.log(room);
-    nsConn.emit("chat", "test");
+    room.emit("startRoomSession", 10);
 
     stdin.addListener("data", function (data) {
       const text = data.toString().trim();
