@@ -1,4 +1,4 @@
-module github.com/sato-s/postgres-notify-websocket
+module github.com/sato-s/toritimer-backend
 
 go 1.20
 
