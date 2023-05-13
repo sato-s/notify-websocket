@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/sato-s/toritimer-backend/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -24,6 +25,7 @@ func main() {
 		os.Getenv("DB_PORT"),
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db.AutoMigrate(&models.Room{})
 	if err != nil {
 		panic(err)
 	}
