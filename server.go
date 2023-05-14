@@ -10,13 +10,13 @@ import (
 )
 
 type Server struct {
-	port string
-	ws   *neffos.Server
-	r    *Room
+	port  string
+	ws    *neffos.Server
+	rooms *Rooms
 }
 
 func NewServer(port string) *Server {
-	s := &Server{port: port, ws: nil}
+	s := &Server{port: port, ws: nil, rooms: nil}
 
 	s.run()
 	return s
@@ -32,8 +32,9 @@ func (s *Server) run() {
 			neffos.OnRoomJoined: s.Debug,
 		},
 	})
-	fmt.Printf("%+v\n", ws)
 	s.ws = ws
+	s.rooms = NewRooms(ws)
+
 	app.Get("/", websocket.Handler(s.ws))
 
 	app.Listen(fmt.Sprintf(":%s", s.port))
@@ -43,13 +44,13 @@ func (s *Server) OnStartRoomSession(ns *neffos.NSConn, msg neffos.Message) error
 	log.Printf("%s", string(msg.Body))
 
 	log.Printf("Session Start at Room `%s Time: %d \n", msg.Room, 10)
-	s.r.Start()
+	s.rooms.Get(msg.Room).Start()
 	return nil
 }
 
 func (s *Server) OnRoomJoin(ns *neffos.NSConn, msg neffos.Message) error {
-	s.r = NewRoom(msg.Room, s.ws)
 	log.Printf("Room `%s` created\n", msg.Room)
+	s.rooms.Get(msg.Room)
 	return nil
 }
 
