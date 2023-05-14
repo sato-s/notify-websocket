@@ -11,12 +11,11 @@ import (
 
 type Server struct {
 	port  string
-	ws    *neffos.Server
 	rooms *Rooms
 }
 
 func NewServer(port string) *Server {
-	s := &Server{port: port, ws: nil, rooms: nil}
+	s := &Server{port: port, rooms: nil}
 
 	s.run()
 	return s
@@ -32,10 +31,9 @@ func (s *Server) run() {
 			neffos.OnRoomJoined: s.Debug,
 		},
 	})
-	s.ws = ws
 	s.rooms = NewRooms(ws)
 
-	app.Get("/", websocket.Handler(s.ws))
+	app.Get("/", websocket.Handler(ws))
 
 	app.Listen(fmt.Sprintf(":%s", s.port))
 }
