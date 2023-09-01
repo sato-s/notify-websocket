@@ -1,15 +1,18 @@
 'use client';
 
 import React from "react";
+import {useRouter} from 'next/navigation'
+
 
 export default function Home() {
+  const router = useRouter()
   const [roomName, setroomName] = React.useState('hogehoge');
 
   const onChange = (roomName: string) => {
     setroomName(roomName);
   }
   const goTo = () => {
-    console.log(roomName)
+    router.push(`/${roomName}`)
   }
   return (
     <div className="relative overflow-hidden">
