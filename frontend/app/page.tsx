@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export default function Goto() {
+export default function Home() {
   const [roomName, setroomName] = React.useState('hogehoge');
 
   const onChange = (roomName: string) => {
